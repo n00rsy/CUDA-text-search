@@ -1,0 +1,3 @@
+﻿  CPUTextSearch.cpp
+C:\Dev\CUDA-text-search\CPUTextSearch\CPUTextSearch.cpp(87,10): warning C4244: 'initializing': conversion from 'std::streamsize' to 'int', possible loss of data
+  CPUTextSearch.vcxproj -> C:\Dev\CUDA-text-search\CPUTextSearch\Debug\CPUTextSearch.exe

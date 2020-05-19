@@ -1,0 +1,2 @@
+C:\Dev\CUDA-text-search\CPUTextSearch\Debug\CPUTextSearch.exe
+C:\Dev\CUDA-text-search\CPUTextSearch\Debug\CPUTextSearch.pdb
