@@ -23,17 +23,16 @@ __device__ void badCharHeuristic(char* str, int size,
 }
 
 //implementation Boyer Moore Algorithm
-__global__ void search(const char* txt, char* pat, int ns, int ms, int * t) {
+__global__ void search(const char* txt, char* pat, int chunk_size, int pat_size, int * t, int threads_per_block) {
 
+	int offset = blockIdx.x* threads_per_block* chunk_size;
 	int i = threadIdx.x;
-	int start = i * ns;
-	int m = ms;
-	int n = ns;
+	int start = offset+(i * chunk_size);
+	int m = pat_size;
+	int n = chunk_size;
 
 	int badchar[NO_OF_CHARS];
-	/* Fill the bad character array by calling
-	the preprocessing function badCharHeuristic()
-	for given pattern */
+
 	badCharHeuristic(pat, m, badchar);
 
 	int s = 0; // s = shift of pattern
@@ -61,15 +60,15 @@ __global__ void search(const char* txt, char* pat, int ns, int ms, int * t) {
 
 int fileLen = 0;
 char* getFileContents(const char*);
-char* contents;
+
 /* Driver code */
 int main(int argc, char* argv[]) {
 	/*
-	input format: <file to search> <search pattern> <CPU | GPU> <num threads>
+	input format: <file to search> <search pattern> <num thread blocks> <num threads>
 	*/
 
 	if (argc != 5) {
-		cout << "input format: <file to search> <search pattern> <CPU | GPU> <num threads>";
+		cout << "input format: <file to search> <search pattern>  <num threads> <num thread blocks>";
 		return -1;
 	}
 	char* file = argv[1];
@@ -77,48 +76,54 @@ int main(int argc, char* argv[]) {
 
 	int pat_len = strlen(pat_);
 	char* pat;
-	int* total;
-
-	cudaMallocManaged(&total, sizeof(int));
 	cudaMallocManaged(&pat, pat_len);
+	//copy input pattern from normal memory to shared CPU/GPU memory
 	for (int i = 0; i < pat_len; i++) {
 		pat[i] = pat_[i];
 	}
+	//shared count variable - needed by cpu and gpu
+	int* total;
+	cudaMallocManaged(&total, sizeof(int));
 
-	int numThreads = atoi(argv[4]);
+	//should check all these to prevent errors but naa. my project my rules
+	char * contents = getFileContents(file);
+	int num_threads = atoi(argv[4]);
+	int num_blocks = atoi(argv[3]);
 
-	contents = getFileContents(file);
-
-
-
-	int partitionLength = strlen(contents) / numThreads;
+	int partitionLength = strlen(contents) / num_threads;
 	auto start = chrono::high_resolution_clock::now();
 
-
-	search << <1, numThreads >> > (contents, pat, partitionLength, pat_len,total);
+	int threads_per_block = num_threads / num_blocks;
+	//make num blocks * threads per block gpu threads
+	search <<<num_blocks, threads_per_block >>> (contents, pat, partitionLength, pat_len,total, threads_per_block );
+	//wait for GPU operations to terminate
 	cudaDeviceSynchronize();
-
 
 	auto stop = chrono::high_resolution_clock::now();
 	auto duration = chrono::duration_cast<chrono::microseconds>(stop - start);
 
-	cout << " Total :" << *total << endl;
+	cout << "Total :" << *total << endl;
 	cout << duration.count() << endl;
+	//free shared variables
 	cudaFree(contents);
+	cudaFree(pat);
+	cudaFree(total);
 	return 0;
 }
-
 
 char* getFileContents(const char* filename) {
 	ifstream in(filename, ios::in | ios::binary);
 	if (in) {
-		char* contents;
 		in.seekg(0, ios::end);
 		int len = in.tellg();
+
+		char* contents;
 		cudaMallocManaged(&contents, len * sizeof(char));
+
 		in.seekg(0, ios::beg);
 		in.read(&contents[0], len);
 		in.close();
+
 		return(contents);
 	}
 	throw(errno);
