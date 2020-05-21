@@ -24,6 +24,8 @@ int main(){
     string cpu_out = " >> cpuout.txt";
     string gpu_out = " >> gpuout.txt";
 
+    cout << "Starting tests..."<<endl;
+
     //num threads increases by powers of 2
     for (int i = 1; i <= 64; i *= 2) {
         //iterate through test files
