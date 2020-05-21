@@ -7,7 +7,7 @@ Both implementations first read the entire input .txt file into a buffer, so tha
 * `CUDATextSearch.exe <path to file> <search pattern> <number of thread blocks> <number of threads>`
 
 # Testing and Results
-I used 3 .txt files I found online: the entirity of Shakespeare's works, Moby Dick, and a file containing a compilation of data from Wikipedia. The graphs below show an average runtime for searching the each file for the substring "Thou". Honestly I should've tested this more but I wanted to start another project.
+I used 3 .txt files I found online: the entirity of Shakespeare's works, Moby Dick, and a file containing a compilation of data from Wikipedia. The graphs below show an average runtime for searching the each file for the substring "Thou" timed using `chrono::high_resolution_clock`. Honestly I should've tested this more but I wanted to start another project.
 ![](img/CPU.PNG)
 ![](img/GPU.PNG)
 # Conclusion
