@@ -5,9 +5,11 @@
 #include <stdio.h>
 #include <string.h>
 
-
 using namespace std;
 # define NO_OF_CHARS 256  
+
+char* getFileContents(const char*);
+
 // preprocessing function 
 __device__ void badCharHeuristic(char* str, int size,
 	int badchar[NO_OF_CHARS]) {
@@ -58,9 +60,6 @@ __global__ void search(const char* txt, char* pat, int chunk_size, int pat_size,
 	}
 }
 
-int fileLen = 0;
-char* getFileContents(const char*);
-
 /* Driver code */
 int main(int argc, char* argv[]) {
 	/*
@@ -76,6 +75,7 @@ int main(int argc, char* argv[]) {
 
 	int pat_len = strlen(pat_);
 	char* pat;
+	
 	cudaMallocManaged(&pat, pat_len);
 	//copy input pattern from normal memory to shared CPU/GPU memory
 	for (int i = 0; i < pat_len; i++) {
@@ -102,7 +102,6 @@ int main(int argc, char* argv[]) {
 	auto stop = chrono::high_resolution_clock::now();
 	auto duration = chrono::duration_cast<chrono::microseconds>(stop - start);
 
-	cout << "Total :" << *total << endl;
 	cout << duration.count() << endl;
 	//free shared variables
 	cudaFree(contents);

@@ -104,7 +104,7 @@ int main(int argc, char* argv[]) {
 		cout << "Failed to open " << file << endl;
 		return -1;
 	}
-	cout << "Total: " << total << endl;
+
 	return 0;
 }
 

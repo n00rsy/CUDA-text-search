@@ -1,0 +1,2 @@
+C:\Dev\CUDA-text-search\TestDriver\Debug\TestDriver.exe
+C:\Dev\CUDA-text-search\TestDriver\Debug\TestDriver.pdb
