@@ -1,8 +1,8 @@
 # CUDA vs CPU for pattern searching: which is faster?
-This is an experimental proof-of-concept project that compares the differences in runtime between a CPU and GPU executing similar implementations of the Boyer Moore pattern search algorithm to count the number of substrings in a very large input string. I test to see how the number of threads impacts runtime, and compare the CPU and GPU against each other.
+This is a proof-of-concept project that compares the differences in runtime between a CPU and GPU executing similar implementations of the Boyer Moore pattern search algorithm to count the number of substrings in a very large input string. I test to see how the number of threads impacts runtime, and compare the CPU and GPU against each other.
 
 # Design
-Both implementations first read the entire input .txt file into a buffer, so that time spent reading the file into memory does not affect our runtime results. The input string is then divided into chunks for each thread to process. (4 threads = 4 chunks, 8 threads = 8 chunks, etc) A shared count variable is incremented each time a thread finds an instance of the search pattern. The executables are invoked with the following arguements:
+Both implementations first read the entire input .txt file into a buffer, so that time spent reading the file into memory does not affect our runtime results. The input string is then divided into chunks for each thread to process. (4 threads = 4 chunks, 8 threads = 8 chunks, etc) A shared count variable is incremented each time a thread finds an instance of the search pattern. Execute with:
 * `CPUTextSearch.exe <path to file> <search pattern> <number of threads>`
 * `CUDATextSearch.exe <path to file> <search pattern> <number of thread blocks> <number of threads>`
 
